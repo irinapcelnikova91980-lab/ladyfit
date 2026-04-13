@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { auth } from '@clerk/nextjs/server'
 import { prisma } from '../../lib/prisma'
 
 type Props = {
@@ -7,6 +8,7 @@ type Props = {
 
 export default async function CoursePage({ params }: Props) {
   const { slug } = await params
+  const { userId: clerkUserId } = await auth()
 
   const course = await prisma.course.findUnique({
     where: { slug },
@@ -21,6 +23,29 @@ export default async function CoursePage({ params }: Props) {
     return <div className="p-10">Курс не найден</div>
   }
 
+  let hasAccess = false
+
+  if (clerkUserId) {
+    const user = await prisma.user.findUnique({
+      where: { clerkId: clerkUserId },
+    })
+
+    if (user) {
+      const access = await prisma.courseAccess.findUnique({
+        where: {
+          userId_courseId: {
+            userId: user.id,
+            courseId: course.id,
+          },
+        },
+      })
+
+      hasAccess = !!access
+    }
+  }
+
+  const isAdmin = clerkUserId === 'user_3Bnw99FHrFWc0MkKwkdXCw9Y4Gr'
+
   return (
     <main className="p-10">
       <h1 className="text-3xl font-bold">{course.title}</h1>
@@ -31,13 +56,36 @@ export default async function CoursePage({ params }: Props) {
 
       <p className="mt-6 text-xl font-semibold">{course.price} ₽</p>
 
-      <div className="mt-8">
-        <Link
-          href={`/courses/${course.slug}/lessons/new`}
-          className="inline-block rounded-xl border px-4 py-2"
-        >
-          Добавить урок
-        </Link>
+      <div className="mt-4">
+        {hasAccess ? (
+          <p className="font-medium text-green-700">
+            У тебя есть доступ к курсу
+          </p>
+        ) : (
+          <p className="font-medium text-red-700">
+            Доступа к курсу пока нет
+          </p>
+        )}
+      </div>
+
+      <div className="mt-8 flex gap-4">
+        {isAdmin && (
+          <Link
+            href={`/courses/${course.slug}/lessons/new`}
+            className="inline-block rounded-xl border px-4 py-2"
+          >
+            Добавить урок
+          </Link>
+        )}
+
+        {!hasAccess && (
+          <Link
+            href={`/courses/${course.slug}/grant-access`}
+            className="inline-block rounded-xl bg-black px-4 py-2 text-white"
+          >
+            Выдать тестовый доступ
+          </Link>
+        )}
       </div>
 
       <div className="mt-8">
@@ -47,7 +95,7 @@ export default async function CoursePage({ params }: Props) {
           <p className="mt-4">Пока нет уроков</p>
         ) : (
           <div className="mt-4 space-y-4">
-            {course.lessons.map((lesson) => (
+            {course.lessons.map((lesson: any) => (
               <Link
                 key={lesson.id}
                 href={`/courses/${course.slug}/lessons/${lesson.id}`}
