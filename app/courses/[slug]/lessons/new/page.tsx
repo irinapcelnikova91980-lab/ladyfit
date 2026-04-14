@@ -1,13 +1,26 @@
+import { auth } from '@clerk/nextjs/server'
+import { prisma } from '../../../../lib/prisma'
 import { createLesson } from './server-actions'
 
 type Props = {
-  params: Promise<{
-    slug: string
-  }>
+  params: Promise<{ slug: string }>
 }
 
 export default async function NewLessonPage({ params }: Props) {
   const { slug } = await params
+  const { userId: clerkUserId } = await auth()
+
+  if (!clerkUserId) {
+    return <div className="p-10">Нужно войти в аккаунт</div>
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { clerkId: clerkUserId },
+  })
+
+  if (!user || user.role !== 'admin') {
+    return <div className="p-10">Нет доступа</div>
+  }
 
   return (
     <main className="p-10">

@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import { prisma } from '../../../../lib/prisma'
+import { getCurrentUser } from '../../../../lib/auth'
+import { hasCourseAccess } from '../../../../lib/access'
 
 type Props = {
   params: Promise<{
@@ -27,6 +29,17 @@ export default async function LessonPage({ params }: Props) {
     return <div className="p-10">Урок не найден</div>
   }
 
+  const user = await getCurrentUser()
+  const isAdmin = user?.role === 'admin'
+
+  const hasAccess = isAdmin
+    ? true
+    : user
+      ? await hasCourseAccess(user.id, course.id)
+      : false
+
+  const canWatch = isAdmin || lesson.isFree || hasAccess
+
   return (
     <main className="p-10">
       <Link
@@ -43,9 +56,15 @@ export default async function LessonPage({ params }: Props) {
       </p>
 
       <div className="mt-6">
-        {lesson.isFree ? (
+        {canWatch ? (
           <div className="rounded-xl border p-4">
-            <p className="font-medium">Это бесплатный урок</p>
+            <p className="font-medium">
+              {isAdmin
+                ? 'Ты администратор: полный доступ к уроку'
+                : lesson.isFree
+                  ? 'Это бесплатный урок'
+                  : 'У тебя есть доступ к платному уроку'}
+            </p>
 
             {lesson.videoUrl ? (
               <div className="mt-4">
@@ -65,8 +84,15 @@ export default async function LessonPage({ params }: Props) {
           <div className="rounded-xl border p-6">
             <p className="text-xl font-semibold">Урок платный</p>
             <p className="mt-2 text-gray-600">
-              Для просмотра этого урока позже понадобится доступ к курсу.
+              Для просмотра этого урока нужен доступ к курсу.
             </p>
+
+            <Link
+              href={`/courses/${course.slug}/grant-access`}
+              className="mt-4 inline-block rounded-xl bg-black px-4 py-2 text-white"
+            >
+              Получить тестовый доступ
+            </Link>
           </div>
         )}
       </div>

@@ -2,8 +2,11 @@
 
 import { redirect } from 'next/navigation'
 import { prisma } from '../../lib/prisma'
+import { requireAdmin } from '../../lib/auth'
 
 export async function createCourse(formData: FormData) {
+  await requireAdmin()
+
   const title = formData.get('title')?.toString() || ''
   const slug = formData.get('slug')?.toString() || ''
   const description = formData.get('description')?.toString() || ''
@@ -26,5 +29,5 @@ export async function createCourse(formData: FormData) {
     },
   })
 
-  redirect('/courses')
+  redirect('/admin')
 }
