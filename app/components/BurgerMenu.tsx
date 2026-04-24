@@ -2,161 +2,164 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { SignInButton, SignUpButton, UserButton } from '@clerk/nextjs'
 
-type BurgerMenuProps = {
+type Props = {
   isLoggedIn: boolean
   role?: string | null
   isOwner: boolean
 }
 
-export default function BurgerMenu({
-  isLoggedIn,
-  role,
-  isOwner,
-}: BurgerMenuProps) {
+const BRAND = '#AD82A6'
+const BRAND_LIGHT = '#f3eef5'
+
+export default function BurgerMenu({ role, isOwner }: Props) {
   const [open, setOpen] = useState(false)
 
   return (
     <>
-      {/* Верхняя панель */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => setOpen(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 bg-white hover:bg-gray-50"
-          aria-label="Открыть меню"
-        >
-          <div className="space-y-1">
-            <div className="h-0.5 w-5 rounded bg-black" />
-            <div className="h-0.5 w-5 rounded bg-black" />
-            <div className="h-0.5 w-5 rounded bg-black" />
-          </div>
-        </button>
-
-        {isLoggedIn && <UserButton />}
-      </div>
-
-      {/* Затемнение фона */}
-      {open && (
-        <div
-          className="fixed inset-0 z-40 bg-black/30"
-          onClick={() => setOpen(false)}
-        />
-      )}
-
-      {/* Боковая панель */}
-      <aside
-        className={`fixed left-0 top-0 z-50 h-full w-72 transform border-r border-gray-200 bg-white shadow-xl transition-transform duration-300 ${
-          open ? 'translate-x-0' : '-translate-x-full'
-        }`}
+      <button
+        onClick={() => setOpen(true)}
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-xl leading-none"
+        aria-label="Открыть меню"
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-5 py-4">
-          <div>
-            <p className="text-lg font-bold">LadyFit</p>
-            <p className="text-xs text-gray-500">Меню</p>
-          </div>
+        ☰
+      </button>
 
-          <button
+      {open && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/25"
             onClick={() => setOpen(false)}
-            className="rounded-lg border border-gray-200 px-3 py-1 text-sm hover:bg-gray-50"
-          >
-            ✕
-          </button>
-        </div>
+          />
 
-        <div className="flex h-[calc(100%-73px)] flex-col justify-between p-4">
-          <nav className="flex flex-col gap-2">
-            {!isLoggedIn && (
-              <>
-                <SignInButton mode="modal">
-                  <button className="w-full rounded-xl border border-gray-200 px-4 py-3 text-left hover:bg-gray-50">
-                    Войти
-                  </button>
-                </SignInButton>
+          <aside className="fixed left-0 top-[73px] z-50 flex h-[calc(100vh-73px)] w-64 flex-col border-r border-gray-100 bg-white shadow-lg">
 
-                <SignUpButton mode="modal">
-                  <button className="w-full rounded-xl bg-black px-4 py-3 text-left text-white hover:bg-black/90">
-                    Регистрация
-                  </button>
-                </SignUpButton>
-              </>
-            )}
+            {/* Шапка */}
+            <div className="border-b border-gray-100 px-5 py-5">
+              <p
+                className="text-xl font-light italic"
+                style={{ fontFamily: 'Georgia, serif', color: BRAND }}
+              >
+                LadyFit
+              </p>
+              <p className="mt-0.5 text-xs uppercase tracking-widest text-gray-400">
+                платформа тренировок
+              </p>
+            </div>
 
-            {role === 'admin' && (
-              <>
-                <Link
-                  href="/courses"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 hover:bg-gray-50"
-                >
-                  Курсы
-                </Link>
+            {/* Навигация */}
+            <nav className="flex-1 px-3 py-4">
+              <p className="mb-2 px-3 text-[9px] uppercase tracking-widest text-gray-400">
+                Навигация
+              </p>
 
-                <Link
-                  href="/admin"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 hover:bg-gray-50"
-                >
-                  Админка
-                </Link>
+              {/* На главную — для всех */}
+              <Link
+                href="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+              >
+                <span className="text-sm">◎</span> На главную
+              </Link>
 
-                <Link
-                  href="/courses/new"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl bg-black px-4 py-3 text-white hover:bg-black/90"
-                >
-                  Создать курс
-                </Link>
-
-                {isOwner && (
+              {role === 'admin' && (
+                <>
                   <Link
-                    href="/debug/owner-role"
+                    href="/courses"
                     onClick={() => setOpen(false)}
-                    className="rounded-xl px-4 py-3 hover:bg-gray-50"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    Настройка доступа
+                    <span className="text-sm">✦</span> Курсы
                   </Link>
-                )}
-              </>
-            )}
 
-            {role === 'user' && (
-              <>
-                <Link
-                  href="/my-courses"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 hover:bg-gray-50"
-                >
-                  Мои курсы
-                </Link>
-
-                <Link
-                  href="/courses"
-                  onClick={() => setOpen(false)}
-                  className="rounded-xl px-4 py-3 hover:bg-gray-50"
-                >
-                  Все курсы
-                </Link>
-
-                {isOwner && (
                   <Link
-                    href="/debug/owner-role"
+                    href="/admin"
                     onClick={() => setOpen(false)}
-                    className="rounded-xl px-4 py-3 hover:bg-gray-50"
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    Режим владельца
+                    <span className="text-sm">⚙</span> Админка
                   </Link>
-                )}
-              </>
-            )}
-          </nav>
 
-          <div className="rounded-2xl border border-gray-200 bg-gray-50 p-4 text-sm text-gray-600">
-            <p className="font-medium text-black">LadyFit</p>
-            <p className="mt-1">Твоя платформа тренировок.</p>
-          </div>
-        </div>
-      </aside>
+                  <Link
+                    href="/courses/new"
+                    onClick={() => setOpen(false)}
+                    className="mt-2 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white"
+                    style={{ background: BRAND }}
+                  >
+                    <span>＋</span> Создать курс
+                  </Link>
+
+                  {isOwner && (
+                    <Link
+                      href="/debug/owner-role"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                      onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <span className="text-sm">⚙</span> Настройка доступа
+                    </Link>
+                  )}
+                </>
+              )}
+
+              {role === 'user' && (
+                <>
+                  <Link
+                    href="/my-courses"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <span className="text-sm">✦</span> Мои курсы
+                  </Link>
+
+                  <Link
+                    href="/courses"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <span className="text-sm">✦</span> Каталог курсов
+                  </Link>
+
+                  {isOwner && (
+                    <Link
+                      href="/debug/owner-role"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                      onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                    >
+                      <span className="text-sm">⚙</span> Настройка доступа
+                    </Link>
+                  )}
+                </>
+              )}
+            </nav>
+
+            {/* Футер */}
+            <div className="border-t border-gray-100 p-4">
+              <p
+                className="text-sm font-light italic"
+                style={{ fontFamily: 'Georgia, serif', color: BRAND }}
+              >
+                LadyFit
+              </p>
+              <p className="text-xs text-gray-400">платформа тренировок</p>
+            </div>
+
+          </aside>
+        </>
+      )}
     </>
   )
 }

@@ -14,46 +14,84 @@ export default async function AdminPage() {
   })
 
   return (
-    <main className="p-10">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Админ-панель</h1>
+    <main className="mx-auto max-w-5xl px-4 py-8">
 
+      {/* Заголовок */}
+      <div className="mb-8 flex items-center justify-between border-b border-gray-100 pb-4">
+        <h1
+          className="text-4xl font-light italic"
+          style={{ fontFamily: 'Georgia, serif' }}
+        >
+          Админ-панель
+        </h1>
         <Link
           href="/courses/new"
-          className="rounded-xl bg-black px-4 py-2 text-white"
+          className="rounded-full px-5 py-2.5 text-xs font-medium uppercase tracking-widest text-white transition-opacity hover:opacity-90"
+          style={{ background: '#AD82A6' }}
         >
-          Создать курс
+          + Создать курс
         </Link>
       </div>
 
-      <div className="mt-8 space-y-4">
-        {courses.length === 0 ? (
-          <p>Курсов пока нет</p>
-        ) : (
-          courses.map((course: any) => (
+      {/* Список курсов */}
+      {courses.length === 0 ? (
+        <p className="py-16 text-center text-sm italic text-gray-400">
+          Курсов пока нет
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {courses.map((course: any) => (
             <div
               key={course.id}
-              className="rounded-xl border p-4 transition hover:bg-gray-50"
+              className="overflow-hidden rounded-2xl border border-gray-100 transition-colors hover:border-[#AD82A6]"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-stretch">
+
+                {/* Лавандовая полоска */}
+                <div
+                  className="w-1 flex-shrink-0"
+                  style={{ background: '#AD82A6' }}
+                />
+
+                {/* Тело карточки */}
                 <Link
                   href={`/courses/${course.slug}`}
-                  className="block flex-1"
+                  className="flex-1 px-5 py-4"
                 >
-                  <p className="text-xl font-semibold">{course.title}</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="mb-1 text-sm font-medium">{course.title}</p>
+                  <p className="mb-3 text-xs font-light text-gray-400">
                     {course.description ?? 'Без описания'}
                   </p>
-                  <p className="mt-2 font-medium">{course.price} ₽</p>
-                  <p className="text-sm text-gray-500">
-                    Уроков: {course.lessons.length}
-                  </p>
+                  <div className="flex gap-4">
+                    <p className="text-xs text-gray-400">
+                      <span
+                        className="mr-1 font-light"
+                        style={{ fontFamily: 'Georgia, serif', fontSize: '16px', color: '#AD82A6' }}
+                      >
+                        {course.price.toLocaleString('ru-RU')}
+                      </span>
+                      ₽
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      <span
+                        className="mr-1 font-light"
+                        style={{ fontFamily: 'Georgia, serif', fontSize: '16px', color: '#AD82A6' }}
+                      >
+                        {course.lessons.length}
+                      </span>
+                      {course.lessons.length === 1 ? 'урок' : course.lessons.length < 5 ? 'урока' : 'уроков'}
+                    </p>
+                  </div>
                 </Link>
 
-                <div className="flex flex-col gap-2">
+                {/* Кнопки */}
+                <div
+                  className="flex flex-col justify-center gap-2 border-l border-gray-100 px-4 py-4"
+                >
                   <Link
                     href={`/admin/courses/${course.id}`}
-                    className="rounded-xl border px-4 py-2 text-center"
+                    className="rounded-lg px-4 py-2 text-center text-xs font-medium uppercase tracking-wide transition-colors"
+                    style={{ border: '0.5px solid #AD82A6', color: '#AD82A6' }}
                   >
                     Редактировать
                   </Link>
@@ -62,17 +100,19 @@ export default async function AdminPage() {
                     <input type="hidden" name="courseId" value={course.id} />
                     <button
                       type="submit"
-                      className="rounded-xl bg-red-600 px-4 py-2 text-white"
+                      className="w-full rounded-lg px-4 py-2 text-xs font-medium uppercase tracking-wide"
+                      style={{ background: '#fdf0f0', color: '#b85a5a', border: '0.5px solid #e8c4c4' }}
                     >
                       Удалить
                     </button>
                   </form>
                 </div>
+
               </div>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </main>
   )
 }
