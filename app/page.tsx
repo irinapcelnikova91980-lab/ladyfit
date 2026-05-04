@@ -2,13 +2,24 @@ import { auth, currentUser } from '@clerk/nextjs/server'
 import { prisma } from './lib/prisma'
 import Link from 'next/link'
 
+const B = '#AD82A6'
+const BL = '#f3eef5'
+const BB = '#e8d5e8'
+
+const SERIF = 'var(--font-cormorant), Georgia, serif'
+
+const CARD_TOPS = [
+  'linear-gradient(135deg,#e8d5e8 0%,#AD82A6 100%)',
+  'linear-gradient(135deg,#dce8f0 0%,#8aaec4 100%)',
+  'linear-gradient(135deg,#e8e4d5 0%,#b8a882 100%)',
+]
+
 export default async function Home() {
   const { userId } = await auth()
 
   if (userId) {
     const user = await currentUser()
     const email = user?.emailAddresses?.[0]?.emailAddress
-
     if (email) {
       await prisma.user.upsert({
         where: { clerkId: userId },
@@ -26,198 +37,154 @@ export default async function Home() {
   })
 
   return (
-    <main className="mx-auto flex max-w-5xl flex-col gap-8 px-4 py-8">
-      <section
-        className="relative flex min-h-[360px] flex-col justify-end overflow-hidden rounded-2xl px-10 py-12"
-        style={{ background: 'linear-gradient(135deg, #c49abf 0%, #AD82A6 100%)' }}
-      >
-        <div
-          className="absolute inset-0 opacity-[0.08]"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(45deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)',
-          }}
-        />
+    <main style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px', display: 'flex', flexDirection: 'column', gap: 32 }}>
 
-        <div className="relative flex max-w-xl flex-col gap-5">
-          <span
-            className="w-fit rounded-full px-4 py-1 text-[10px] font-medium uppercase tracking-widest text-white"
-            style={{
-              background: 'rgba(255,255,255,0.2)',
-              border: '0.5px solid rgba(255,255,255,0.35)',
-            }}
-          >
+      {/* Hero */}
+      <section style={{
+        position: 'relative', minHeight: 380, borderRadius: 24, overflow: 'hidden',
+        background: 'linear-gradient(135deg, #c49abf 0%, #AD82A6 100%)',
+        display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+        padding: '48px 48px',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0, opacity: 0.07,
+          backgroundImage: 'repeating-linear-gradient(45deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)',
+        }} />
+        <div style={{ position: 'relative', maxWidth: 520, display: 'flex', flexDirection: 'column', gap: 20 }}>
+          <span style={{
+            display: 'inline-block', width: 'fit-content',
+            borderRadius: 999, padding: '4px 16px',
+            fontSize: 10, fontWeight: 500, letterSpacing: '0.12em',
+            textTransform: 'uppercase', color: '#fff',
+            background: 'rgba(255,255,255,0.2)',
+            border: '0.5px solid rgba(255,255,255,0.35)',
+          }}>
             Платформа онлайн-тренировок
           </span>
-
-          <h1
-            className="text-6xl font-light italic text-white"
-            style={{ fontFamily: 'Georgia, serif', lineHeight: 1.05 }}
-          >
+          <h1 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 72, color: '#fff', lineHeight: 1 }}>
             LadyFit
           </h1>
-
-          <p className="max-w-md text-sm font-light text-white/75">
+          <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.75)', maxWidth: 380 }}>
             Стань лучшей версией себя — в любое время и в любом месте
           </p>
-
-          <div className="flex gap-3">
-            <Link
-              href="/courses"
-              className="rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-widest"
-              style={{ color: '#AD82A6' }}
-            >
+          <div style={{ display: 'flex', gap: 12 }}>
+            <Link href="/courses" style={{
+              borderRadius: 999, background: '#fff', color: B,
+              padding: '12px 28px', fontSize: 11, fontWeight: 500,
+              letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none',
+            }}>
               Смотреть курсы →
             </Link>
-
-            <Link
-              href="/about"
-              className="rounded-full px-6 py-3 text-xs font-medium uppercase tracking-widest text-white"
-              style={{ border: '1px solid rgba(255,255,255,0.5)' }}
-            >
+            <Link href="/about" style={{
+              borderRadius: 999, color: '#fff',
+              padding: '12px 28px', fontSize: 11, fontWeight: 500,
+              letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none',
+              border: '1px solid rgba(255,255,255,0.5)',
+            }}>
               О тренере
             </Link>
           </div>
         </div>
       </section>
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      {/* Stats */}
+      <section style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
         {[
           { num: '1 200+', label: 'учениц прошли курсы' },
           { num: '8 лет', label: 'тренерского опыта' },
           { num: '52', label: 'видео-урока' },
           { num: '4.9', label: 'средняя оценка' },
         ].map((m) => (
-          <div
-            key={m.label}
-            className="rounded-2xl border border-gray-100 bg-white p-5 text-center"
-          >
-            <div
-              className="mb-1 text-3xl font-light italic"
-              style={{ fontFamily: 'Georgia, serif', color: '#AD82A6' }}
-            >
+          <div key={m.label} style={{
+            background: '#fff', borderRadius: 20, border: '1px solid #ede8e8',
+            padding: '24px 16px', textAlign: 'center',
+          }}>
+            <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 32, color: B, fontWeight: 300, marginBottom: 6 }}>
               {m.num}
             </div>
-            <div className="text-[11px] uppercase tracking-widest text-gray-400">
+            <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#aaa' }}>
               {m.label}
             </div>
           </div>
         ))}
       </section>
 
-      <section className="flex flex-col gap-4">
-        <div className="flex items-baseline justify-between border-b border-gray-100 pb-3">
-          <h2
-            className="text-3xl font-light italic"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
-            Почему LadyFit
-          </h2>
-          <p className="text-sm text-gray-400">
-            Три причины, по которым ученицы возвращаются
-          </p>
+      {/* Why LadyFit */}
+      <section>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', borderBottom: '1px solid #ede8e8', paddingBottom: 16, marginBottom: 20 }}>
+          <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 36 }}>Почему LadyFit</h2>
+          <p style={{ fontSize: 12, color: '#aaa' }}>Три причины, по которым ученицы возвращаются</p>
         </div>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
           {[
-            {
-              icon: '✦',
-              title: 'Профессионально',
-              desc: 'Курсы от сертифицированного тренера с 8-летним опытом',
-            },
-            {
-              icon: '◎',
-              title: 'Удобно',
-              desc: 'Занимайтесь в своём темпе и ритме — без расписания',
-            },
-            {
-              icon: '◇',
-              title: 'Результат',
-              desc: 'Реальные изменения за 30 дней или возврат денег',
-            },
+            { icon: '✦', title: 'Профессионально', desc: 'Курсы от сертифицированного тренера с 8-летним опытом' },
+            { icon: '◎', title: 'Удобно', desc: 'Занимайтесь в своём темпе и ритме — без расписания' },
+            { icon: '◇', title: 'Результат', desc: 'Реальные изменения за 30 дней или возврат денег' },
           ].map((f) => (
-            <div key={f.title} className="rounded-2xl border border-gray-100 bg-white p-6">
-              <div className="mb-3 text-xl" style={{ color: '#AD82A6' }}>
-                {f.icon}
-              </div>
-              <p className="mb-1 text-sm font-medium">{f.title}</p>
-              <p className="text-xs font-light leading-relaxed text-gray-400">
-                {f.desc}
-              </p>
+            <div key={f.title} style={{ background: '#fff', borderRadius: 20, border: '1px solid #ede8e8', padding: '28px 24px' }}>
+              <div style={{ fontSize: 20, color: B, marginBottom: 12 }}>{f.icon}</div>
+              <p style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>{f.title}</p>
+              <p style={{ fontSize: 12, color: '#aaa', lineHeight: 1.6, fontWeight: 300 }}>{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <div className="flex items-baseline justify-between border-b border-gray-100 pb-3">
-          <h2
-            className="text-3xl font-light italic"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
-            Популярные курсы
-          </h2>
-
-          <Link href="/courses" className="text-sm" style={{ color: '#AD82A6' }}>
-            Все курсы →
-          </Link>
+      {/* Popular courses */}
+      <section>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', borderBottom: '1px solid #ede8e8', paddingBottom: 16, marginBottom: 20 }}>
+          <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 36 }}>Популярные курсы</h2>
+          <Link href="/courses" style={{ fontSize: 12, color: B, textDecoration: 'none' }}>Все курсы →</Link>
         </div>
 
         {courses.length === 0 ? (
-          <p className="py-8 text-center text-sm italic text-gray-400">
+          <p style={{ textAlign: 'center', color: '#bbb', fontSize: 14, padding: '60px 0', fontStyle: 'italic', fontFamily: SERIF }}>
             Курсы скоро появятся
           </p>
         ) : (
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
             {courses.map((course, i) => (
-              <Link
-                key={course.id}
-                href={`/courses/${course.slug}`}
-                className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all hover:-translate-y-0.5 hover:border-[#AD82A6]"
-              >
-                <div
-                  className="relative flex h-36 items-end p-4"
-                  style={{ background: 'linear-gradient(135deg, #e8d5e8 0%, #AD82A6 100%)' }}
-                >
-                  <span
-                    className="absolute right-4 top-3 font-light italic text-white/25"
-                    style={{ fontFamily: 'Georgia, serif', fontSize: 52, lineHeight: 1 }}
-                  >
+              <Link key={course.id} href={`/courses/${course.slug}`} style={{
+                borderRadius: 20, overflow: 'hidden',
+                border: '1px solid #ede8e8', background: '#fff',
+                textDecoration: 'none', display: 'block',
+              }}>
+                <div style={{
+                  height: 140, position: 'relative',
+                  background: CARD_TOPS[i % CARD_TOPS.length],
+                  display: 'flex', alignItems: 'flex-end', padding: 16,
+                }}>
+                  <span style={{
+                    position: 'absolute', right: 16, top: 8,
+                    fontFamily: SERIF, fontSize: 52, fontWeight: 300,
+                    color: 'rgba(255,255,255,.2)', lineHeight: 1,
+                  }}>
                     {String(i + 1).padStart(2, '0')}
                   </span>
-
-                  <span
-                    className="rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-white"
-                    style={{
-                      background: 'rgba(255,255,255,0.22)',
-                      border: '0.5px solid rgba(255,255,255,0.35)',
-                    }}
-                  >
-                    Онлайн-курс
-                  </span>
+                  <span style={{
+                    borderRadius: 999, padding: '4px 12px',
+                    fontSize: 10, fontWeight: 500, letterSpacing: '0.1em',
+                    textTransform: 'uppercase', color: '#fff',
+                    background: 'rgba(255,255,255,.22)',
+                    border: '0.5px solid rgba(255,255,255,.35)',
+                  }}>Онлайн-курс</span>
                 </div>
-
-                <div className="flex flex-col gap-2 p-5">
-                  <p className="text-sm font-medium">{course.title}</p>
-
-                  <p className="line-clamp-2 text-xs leading-relaxed text-gray-400">
-                    {course.description ?? ''}
-                  </p>
-
-                  <div className="mt-2 flex items-center justify-between">
-                    <span
-                      className="text-xl font-light italic"
-                      style={{ fontFamily: 'Georgia, serif', color: '#AD82A6' }}
-                    >
+                <div style={{ padding: '20px 24px' }}>
+                  <p style={{ fontSize: 14, fontWeight: 500, marginBottom: 6 }}>{course.title}</p>
+                  <p style={{
+                    fontSize: 12, color: '#888', lineHeight: 1.6, fontWeight: 300, marginBottom: 16,
+                    display: '-webkit-box', WebkitLineClamp: 2,
+                    WebkitBoxOrient: 'vertical', overflow: 'hidden',
+                  } as React.CSSProperties}>{course.description ?? ''}</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 22, color: B }}>
                       {course.price.toLocaleString('ru-RU')} ₽
                     </span>
-
-                    <span
-                      className="grid h-7 w-7 place-items-center rounded-full text-xs"
-                      style={{ border: '1px solid #AD82A6', color: '#AD82A6' }}
-                    >
-                      →
-                    </span>
+                    <span style={{
+                      width: 28, height: 28, borderRadius: '50%',
+                      border: `1px solid ${B}`, color: B,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13,
+                    }}>→</span>
                   </div>
                 </div>
               </Link>
@@ -226,89 +193,58 @@ export default async function Home() {
         )}
       </section>
 
-      <section
-        className="flex items-center justify-between gap-6 rounded-2xl p-8"
-        style={{ background: '#f3eef5', border: '1px solid #e8d5e8' }}
-      >
-        <div className="flex flex-col gap-2">
-          <span
-            className="w-fit rounded-full px-3 py-1 text-[10px] font-medium uppercase tracking-widest"
-            style={{ background: '#e8d5e8', color: '#AD82A6' }}
-          >
-            Telegram-канал
-          </span>
-
-          <h3
-            className="text-xl font-light italic"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
+      {/* Telegram banner */}
+      <section style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24,
+        borderRadius: 20, padding: '32px 40px',
+        background: BL, border: `1px solid ${BB}`,
+      }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <span style={{
+            display: 'inline-block', width: 'fit-content',
+            borderRadius: 999, padding: '4px 12px', fontSize: 10,
+            fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
+            background: BB, color: B,
+          }}>Telegram-канал</span>
+          <h3 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 24 }}>
             Бесплатные мини-тренировки каждую неделю
           </h3>
-
-          <p className="text-sm text-gray-400">
+          <p style={{ fontSize: 13, color: '#aaa', fontWeight: 300 }}>
             Короткие видео, чек-листы, разборы техники — в нашем Telegram.
           </p>
         </div>
-
-        <a
-          href="https://t.me/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 rounded-full px-6 py-3 text-xs font-medium uppercase tracking-widest text-white"
-          style={{ background: '#AD82A6' }}
-        >
+        <a href="https://t.me/" target="_blank" rel="noopener noreferrer" style={{
+          flexShrink: 0, borderRadius: 999, background: B, color: '#fff',
+          padding: '12px 28px', fontSize: 11, fontWeight: 500,
+          letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none',
+        }}>
           ✈ Подписаться
         </a>
       </section>
 
-      <section className="flex flex-col gap-4">
-        <h2
-          className="text-3xl font-light italic"
-          style={{ fontFamily: 'Georgia, serif' }}
-        >
+      {/* Reviews */}
+      <section>
+        <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 36, marginBottom: 20 }}>
           Говорят ученицы
         </h2>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
           {[
-            {
-              name: 'Анна, 32',
-              course: 'Пресс',
-              text: 'За 4 недели ушли 3 см с талии. Главное — наконец-то полюбила тренировки.',
-            },
-            {
-              name: 'Мария, 28',
-              course: 'Ягодицы',
-              text: 'Марина объясняет так, что после первой недели понимаешь какие мышцы работают.',
-            },
-            {
-              name: 'Елена, 41',
-              course: 'Спина',
-              text: 'Утром перестала просыпаться с болью в пояснице. Это бесценно.',
-            },
+            { name: 'Анна, 32', course: 'Пресс', text: 'За 4 недели ушли 3 см с талии. Главное — наконец-то полюбила тренировки.' },
+            { name: 'Мария, 28', course: 'Ягодицы', text: 'Марина объясняет так, что после первой недели понимаешь какие мышцы работают.' },
+            { name: 'Елена, 41', course: 'Спина', text: 'Утром перестала просыпаться с болью в пояснице. Это бесценно.' },
           ].map((r) => (
-            <div
-              key={r.name}
-              className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-6"
-            >
-              <p
-                className="text-base font-light italic leading-relaxed"
-                style={{ fontFamily: 'Georgia, serif' }}
-              >
+            <div key={r.name} style={{
+              background: '#fff', borderRadius: 20, border: '1px solid #ede8e8',
+              padding: '28px 24px', display: 'flex', flexDirection: 'column', gap: 16,
+            }}>
+              <p style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 16, fontWeight: 300, lineHeight: 1.6, color: '#444', flex: 1 }}>
                 «{r.text}»
               </p>
-
-              <div className="mt-auto flex items-center gap-3">
-                <div
-                  className="h-9 w-9 flex-shrink-0 rounded-full"
-                  style={{ background: '#f3eef5', border: '1px solid #AD82A6' }}
-                />
-
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 36, height: 36, borderRadius: '50%', background: BL, border: `1px solid ${B}`, flexShrink: 0 }} />
                 <div>
-                  <p className="text-sm font-medium">{r.name}</p>
-                  <p className="text-[11px] uppercase tracking-widest text-gray-400">
-                    курс «{r.course}»
-                  </p>
+                  <p style={{ fontSize: 13, fontWeight: 500 }}>{r.name}</p>
+                  <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#aaa' }}>курс «{r.course}»</p>
                 </div>
               </div>
             </div>
@@ -316,78 +252,46 @@ export default async function Home() {
         </div>
       </section>
 
-      <section
-        className="flex items-center justify-between gap-6 rounded-2xl px-8 py-8"
-        style={{ border: '0.5px solid #AD82A6' }}
-      >
-        <h3
-          className="text-3xl font-light italic"
-          style={{ fontFamily: 'Georgia, serif' }}
-        >
-          Готова начать?
-        </h3>
-
-        <Link
-          href="/courses"
-          className="flex-shrink-0 rounded-full px-6 py-3 text-xs font-medium uppercase tracking-widest text-white"
-          style={{ background: '#AD82A6' }}
-        >
+      {/* CTA */}
+      <section style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 24,
+        borderRadius: 20, padding: '40px 48px',
+        border: `1px solid ${B}`,
+      }}>
+        <h3 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 36 }}>Готова начать?</h3>
+        <Link href="/courses" style={{
+          flexShrink: 0, borderRadius: 999, background: B, color: '#fff',
+          padding: '12px 28px', fontSize: 11, fontWeight: 500,
+          letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none',
+        }}>
           Выбрать курс
         </Link>
       </section>
 
-      <footer className="grid grid-cols-1 gap-8 border-t border-gray-100 pt-8 pb-4 sm:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <span
-            className="text-xl font-light italic"
-            style={{ fontFamily: 'Georgia, serif', color: '#AD82A6' }}
-          >
-            LadyFit
-          </span>
-          <p className="text-xs text-gray-400">Платформа онлайн-тренировок</p>
+      {/* Footer */}
+      <footer style={{ borderTop: '1px solid #ede8e8', paddingTop: 32, paddingBottom: 16, display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32 }}>
+        <div>
+          <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 22, color: B, display: 'block', marginBottom: 6 }}>LadyFit</span>
+          <p style={{ fontSize: 12, color: '#aaa' }}>Платформа онлайн-тренировок</p>
         </div>
-
-        <div className="grid grid-cols-3 gap-4">
-          <div className="flex flex-col gap-2">
-            <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
-              Курсы
-            </p>
-            <Link href="/courses" className="text-xs text-gray-500 hover:text-[#AD82A6]">
-              Каталог
-            </Link>
-            <Link href="/my-courses" className="text-xs text-gray-500 hover:text-[#AD82A6]">
-              Мои курсы
-            </Link>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
-              Контакты
-            </p>
-            <a href="https://t.me/" className="text-xs text-gray-500 hover:text-[#AD82A6]">
-              Telegram
-            </a>
-            <a
-              href="mailto:info@ladyfit.ru"
-              className="text-xs text-gray-500 hover:text-[#AD82A6]"
-            >
-              Email
-            </a>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <p className="text-[10px] font-medium uppercase tracking-widest text-gray-400">
-              Документы
-            </p>
-            <Link href="/offer" className="text-xs text-gray-500 hover:text-[#AD82A6]">
-              Оферта
-            </Link>
-            <Link href="/privacy" className="text-xs text-gray-500 hover:text-[#AD82A6]">
-              Политика
-            </Link>
-          </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
+          {[
+            { title: 'Курсы', links: [{ label: 'Каталог', href: '/courses' }, { label: 'Мои курсы', href: '/my-courses' }] },
+            { title: 'Контакты', links: [{ label: 'Telegram', href: 'https://t.me/' }, { label: 'Email', href: 'mailto:info@ladyfit.ru' }] },
+            { title: 'Документы', links: [{ label: 'Оферта', href: '/offer' }, { label: 'Политика', href: '/privacy' }] },
+          ].map((col) => (
+            <div key={col.title}>
+              <p style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#aaa', marginBottom: 12 }}>{col.title}</p>
+              {col.links.map((l) => (
+                <Link key={l.label} href={l.href} style={{ display: 'block', fontSize: 12, color: '#666', marginBottom: 8, textDecoration: 'none' }}>
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+          ))}
         </div>
       </footer>
+
     </main>
   )
 }
