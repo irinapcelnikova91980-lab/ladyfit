@@ -1,6 +1,6 @@
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
-import { Cormorant_Garamond, Jost } from 'next/font/google'
+import { Cormorant_Garamond, Jost, Fraunces, Bodoni_Moda } from 'next/font/google'
 import Navbar from './components/Navbar'
 
 const cormorant = Cormorant_Garamond({
@@ -18,8 +18,24 @@ const jost = Jost({
   display: 'swap',
 })
 
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['300', '400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-fraunces',
+  display: 'swap',
+})
+
+const bodoni = Bodoni_Moda({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  style: ['normal', 'italic'],
+  variable: '--font-bodoni',
+  display: 'swap',
+})
+
 export const metadata = {
-  title: 'LadyFit',
+  title: 'SomraFit',
   description: 'Платформа онлайн-тренировок Марины Сомра. Там, где фитнес встречается с душой.',
 }
 
@@ -30,7 +46,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="ru" className={`${cormorant.variable} ${jost.variable}`}>
+      <html lang="ru" className={`${cormorant.variable} ${jost.variable} ${fraunces.variable} ${bodoni.variable}`}>
         <body>
           <Navbar />
           {children}

@@ -18,13 +18,6 @@ const CARD_TOPS = [
   'linear-gradient(135deg,#e8dcd5 0%,#a8907e 100%)',
 ]
 
-const ACHIEVEMENTS = [
-  { icon: '🏆', title: 'Первый урок', desc: 'Просмотрен первый урок', earned: true },
-  { icon: '🔥', title: '7 дней подряд', desc: 'Тренировки 7 дней кряду', earned: true },
-  { icon: '⭐', title: 'Курс завершён', desc: 'Пройден полный курс', earned: false },
-  { icon: '💪', title: '30 уроков', desc: 'Просмотрено 30 уроков', earned: false },
-]
-
 type Course = {
   id: string
   slug: string
@@ -32,9 +25,23 @@ type Course = {
   description: string | null
   price: number
   lessons: { id: string }[]
+  completedCount: number
 }
 
-export default function MyCoursesClient({ courses }: { courses: Course[] }) {
+type Achievement = {
+  icon: string
+  title: string
+  desc: string
+  earned: boolean
+}
+
+export default function MyCoursesClient({
+  courses,
+  achievements,
+}: {
+  courses: Course[]
+  achievements: Achievement[]
+}) {
   const { user } = useUser()
   const [tab, setTab] = useState(0)
   const tabs = ['Мои курсы', 'Достижения', 'Настройки']
@@ -101,36 +108,37 @@ export default function MyCoursesClient({ courses }: { courses: Course[] }) {
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
-            {courses.map((c, idx) => (
-              <div key={c.id} style={{ background: '#fff', borderRadius: 20, overflow: 'hidden', border: '1px solid #ede8e8' }}>
-                <div style={{ height: 120, background: CARD_TOPS[idx % CARD_TOPS.length], position: 'relative' }}>
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, background: 'rgba(255,255,255,.2)' }}>
-                    <div style={{ width: '60%', height: '100%', background: '#fff' }} />
+            {courses.map((c, idx) => {
+              const total = c.lessons.length
+              const done = c.completedCount
+              const pct = total > 0 ? Math.round((done / total) * 100) : 0
+              return (
+                <div key={c.id} style={{ background: '#fff', borderRadius: 20, overflow: 'hidden', border: '1px solid #ede8e8' }}>
+                  <div style={{ height: 120, background: CARD_TOPS[idx % CARD_TOPS.length] }} />
+                  <div style={{ padding: '20px 24px' }}>
+                    <p style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>{c.title}</p>
+                    <p style={{ fontSize: 12, color: '#aaa', marginBottom: 12 }}>
+                      {pct}% пройдено · {total} уроков
+                    </p>
+                    <div style={{ background: BB, borderRadius: 999, height: 4, marginBottom: 16 }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: B, borderRadius: 999, transition: 'width .3s' }} />
+                    </div>
+                    <Link
+                      href={`/courses/${c.slug}`}
+                      style={{
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        width: '100%', borderRadius: 999, padding: '8px 0',
+                        fontSize: 11, fontWeight: 500, letterSpacing: '0.08em',
+                        textTransform: 'uppercase', background: B, color: '#fff',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      {pct === 100 ? 'Повторить' : pct > 0 ? 'Продолжить →' : 'Начать →'}
+                    </Link>
                   </div>
                 </div>
-                <div style={{ padding: '20px 24px' }}>
-                  <p style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>{c.title}</p>
-                  <p style={{ fontSize: 12, color: '#aaa', marginBottom: 16 }}>
-                    60% пройдено · {c.lessons.length} уроков
-                  </p>
-                  <div style={{ background: BB, borderRadius: 999, height: 4, marginBottom: 16 }}>
-                    <div style={{ width: '60%', height: '100%', background: B, borderRadius: 999 }} />
-                  </div>
-                  <Link
-                    href={`/courses/${c.slug}`}
-                    style={{
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      width: '100%', borderRadius: 999, padding: '8px 0',
-                      fontSize: 11, fontWeight: 500, letterSpacing: '0.08em',
-                      textTransform: 'uppercase', background: B, color: '#fff',
-                      textDecoration: 'none',
-                    }}
-                  >
-                    Продолжить →
-                  </Link>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )
       )}
@@ -138,7 +146,7 @@ export default function MyCoursesClient({ courses }: { courses: Course[] }) {
       {/* Tab: Achievements */}
       {tab === 1 && (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-          {ACHIEVEMENTS.map(a => (
+          {achievements.map(a => (
             <div
               key={a.title}
               style={{
@@ -146,11 +154,20 @@ export default function MyCoursesClient({ courses }: { courses: Course[] }) {
                 border: `1px solid ${a.earned ? BB : '#ede8e8'}`,
                 borderRadius: 20, padding: '24px', textAlign: 'center',
                 opacity: a.earned ? 1 : 0.5,
+                transition: 'opacity .2s',
               }}
             >
               <div style={{ fontSize: 36, marginBottom: 12 }}>{a.icon}</div>
               <p style={{ fontSize: 13, fontWeight: 500, marginBottom: 6 }}>{a.title}</p>
               <p style={{ fontSize: 12, color: '#aaa', fontWeight: 300 }}>{a.desc}</p>
+              {a.earned && (
+                <div style={{
+                  marginTop: 10, fontSize: 10, letterSpacing: '0.08em',
+                  textTransform: 'uppercase', color: BT, fontWeight: 500,
+                }}>
+                  Получено ✓
+                </div>
+              )}
             </div>
           ))}
         </div>

@@ -7,14 +7,15 @@ datasource db {
 }
 
 model User {
-  id        String         @id @default(cuid())
-  clerkId   String         @unique
-  email     String         @unique
+  id        String           @id @default(cuid())
+  clerkId   String           @unique
+  email     String           @unique
   name      String?
-  role      String         @default("user")
-  createdAt DateTime       @default(now())
+  role      String           @default("user")
+  createdAt DateTime         @default(now())
 
   accesses  CourseAccess[]
+  progress  LessonProgress[]
 }
 
 model Course {
@@ -32,16 +33,29 @@ model Course {
 }
 
 model Lesson {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   title     String
   content   String?
   videoUrl  String?
   order     Int
-  isFree    Boolean  @default(false)
-  createdAt DateTime @default(now())
+  isFree    Boolean          @default(false)
+  createdAt DateTime         @default(now())
 
   courseId  String
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course    Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress  LessonProgress[]
+}
+
+model LessonProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  lessonId  String
+  createdAt DateTime @default(now())
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
 }
 
 model CourseAccess {

@@ -4,47 +4,30 @@ import { auth } from '@clerk/nextjs/server'
 import { notFound, redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { prisma } from '../../lib/prisma'
-
-const OWNER_CLERK_ID = 'user_3Bnw99FHrFWc0MkKwkdXCw9Y4Gr'
+import { isOwner } from '../../lib/owner'
 
 export async function makeMeUser() {
   const { userId: clerkId } = await auth()
-
-  if (!clerkId || clerkId !== OWNER_CLERK_ID) {
-    notFound()
-  }
+  if (!isOwner(clerkId)) notFound()
 
   await prisma.user.update({
-    where: { clerkId },
+    where: { clerkId: clerkId! },
     data: { role: 'user' },
   })
 
-  revalidatePath('/')
-  revalidatePath('/courses')
-  revalidatePath('/admin')
-  revalidatePath('/my-courses')
-  revalidatePath('/debug/owner-role')
-
+  revalidatePath('/', 'layout')
   redirect('/')
 }
 
 export async function makeMeAdmin() {
   const { userId: clerkId } = await auth()
-
-  if (!clerkId || clerkId !== OWNER_CLERK_ID) {
-    notFound()
-  }
+  if (!isOwner(clerkId)) notFound()
 
   await prisma.user.update({
-    where: { clerkId },
+    where: { clerkId: clerkId! },
     data: { role: 'admin' },
   })
 
-  revalidatePath('/')
-  revalidatePath('/courses')
-  revalidatePath('/admin')
-  revalidatePath('/my-courses')
-  revalidatePath('/debug/owner-role')
-
+  revalidatePath('/', 'layout')
   redirect('/')
 }

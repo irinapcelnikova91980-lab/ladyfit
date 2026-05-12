@@ -37,6 +37,15 @@ export default async function CoursePage({ params }: Props) {
       ? await hasCourseAccess(user.id, course.id)
       : false
 
+  const completedLessonIds = user
+    ? new Set(
+        (await prisma.lessonProgress.findMany({
+          where: { userId: user.id, lessonId: { in: course.lessons.map(l => l.id) } },
+          select: { lessonId: true },
+        })).map((p: { lessonId: string }) => p.lessonId)
+      )
+    : new Set<string>()
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-8">
 
@@ -119,53 +128,58 @@ export default async function CoursePage({ params }: Props) {
               </p>
             ) : (
               <div>
-                {course.lessons.map((lesson: any) => (
-                  <div
-                    key={lesson.id}
-                    className="flex items-start gap-4 border-b border-gray-100 py-4"
-                  >
-                    <span className="min-w-[28px] text-xl font-light text-gray-400" style={{ fontFamily: 'Georgia, serif' }}>
-                      {String(lesson.order).padStart(2, '0')}
-                    </span>
+                {course.lessons.map((lesson) => {
+                  const done = completedLessonIds.has(lesson.id)
+                  return (
+                    <div
+                      key={lesson.id}
+                      className="flex items-start gap-4 border-b border-gray-100 py-4"
+                    >
+                      <span className="min-w-[28px] text-xl font-light text-gray-400" style={{ fontFamily: 'Georgia, serif' }}>
+                        {done
+                          ? <span style={{ color: BRAND, fontSize: 18 }}>✓</span>
+                          : String(lesson.order).padStart(2, '0')}
+                      </span>
 
-                    <div className="flex-1">
-                      {hasAccess || lesson.isFree ? (
-                        <Link href={`/courses/${course.slug}/lessons/${lesson.id}`}>
-                          <p className="text-sm font-medium hover:opacity-60 transition-opacity">
-                            {lesson.title}
-                          </p>
-                        </Link>
-                      ) : (
-                        <p className="text-sm font-medium text-gray-400">{lesson.title}</p>
-                      )}
-                      {lesson.content && (
-                        <p className="mt-1 text-xs text-gray-400">{lesson.content}</p>
-                      )}
+                      <div className="flex-1">
+                        {hasAccess || lesson.isFree ? (
+                          <Link href={`/courses/${course.slug}/lessons/${lesson.id}`}>
+                            <p className="text-sm font-medium hover:opacity-60 transition-opacity" style={{ color: done ? BRAND_TEXT : undefined }}>
+                              {lesson.title}
+                            </p>
+                          </Link>
+                        ) : (
+                          <p className="text-sm font-medium text-gray-400">{lesson.title}</p>
+                        )}
+                        {lesson.content && (
+                          <p className="mt-1 text-xs text-gray-400">{lesson.content}</p>
+                        )}
+                      </div>
+
+                      <div className="mt-0.5 shrink-0" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {lesson.isFree ? (
+                          <span
+                            className="rounded-full px-2 py-1 text-xs uppercase tracking-wide"
+                            style={{ background: BRAND_LIGHT, color: BRAND_TEXT, border: `0.5px solid ${BRAND_BORDER}` }}
+                          >
+                            Бесплатно
+                          </span>
+                        ) : hasAccess ? null : (
+                          <span className="text-xs text-gray-300">🔒</span>
+                        )}
+
+                        {isAdmin && (
+                          <Link
+                            href={`/admin/lessons/${lesson.id}`}
+                            className="ml-2 inline-block rounded-lg border border-gray-200 px-3 py-1 text-xs hover:bg-gray-50"
+                          >
+                            Редактировать
+                          </Link>
+                        )}
+                      </div>
                     </div>
-
-                    <div className="mt-0.5 shrink-0">
-                      {lesson.isFree ? (
-                        <span
-                          className="rounded-full px-2 py-1 text-xs uppercase tracking-wide"
-                          style={{ background: BRAND_LIGHT, color: BRAND_TEXT, border: `0.5px solid ${BRAND_BORDER}` }}
-                        >
-                          Бесплатно
-                        </span>
-                      ) : hasAccess ? null : (
-                        <span className="text-xs text-gray-300">🔒</span>
-                      )}
-
-                      {isAdmin && (
-                        <Link
-                          href={`/admin/lessons/${lesson.id}`}
-                          className="ml-2 inline-block rounded-lg border border-gray-200 px-3 py-1 text-xs hover:bg-gray-50"
-                        >
-                          Редактировать
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </div>

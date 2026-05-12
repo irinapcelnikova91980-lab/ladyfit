@@ -62,7 +62,7 @@ export default async function Home() {
             Платформа онлайн-тренировок
           </span>
           <h1 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 72, color: '#fff', lineHeight: 1 }}>
-            LadyFit
+            SomraFit
           </h1>
           <p style={{ fontSize: 14, fontWeight: 300, color: 'rgba(255,255,255,0.75)', maxWidth: 380 }}>
             Стань лучшей версией себя — в любое время и в любом месте
@@ -109,10 +109,10 @@ export default async function Home() {
         ))}
       </section>
 
-      {/* Why LadyFit */}
+      {/* Why SomraFit */}
       <section>
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', borderBottom: '1px solid #ede8e8', paddingBottom: 16, marginBottom: 20 }}>
-          <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 36 }}>Почему LadyFit</h2>
+          <h2 style={{ fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300, fontSize: 36 }}>Почему SomraFit</h2>
           <p style={{ fontSize: 12, color: '#aaa' }}>Три причины, по которым ученицы возвращаются</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
@@ -271,13 +271,13 @@ export default async function Home() {
       {/* Footer */}
       <footer style={{ borderTop: '1px solid #ede8e8', paddingTop: 32, paddingBottom: 16, display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 32 }}>
         <div>
-          <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 22, color: B, display: 'block', marginBottom: 6 }}>LadyFit</span>
+          <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 22, color: B, display: 'block', marginBottom: 6 }}>SomraFit</span>
           <p style={{ fontSize: 12, color: '#aaa' }}>Платформа онлайн-тренировок</p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
           {[
             { title: 'Курсы', links: [{ label: 'Каталог', href: '/courses' }, { label: 'Мои курсы', href: '/my-courses' }] },
-            { title: 'Контакты', links: [{ label: 'Telegram', href: 'https://t.me/' }, { label: 'Email', href: 'mailto:info@ladyfit.ru' }] },
+            { title: 'Контакты', links: [{ label: 'Telegram', href: 'https://t.me/' }, { label: 'Email', href: 'mailto:info@somrafit.ru' }] },
             { title: 'Документы', links: [{ label: 'Оферта', href: '/offer' }, { label: 'Политика', href: '/privacy' }] },
           ].map((col) => (
             <div key={col.title}>

@@ -24,13 +24,22 @@ export default async function AdminPage() {
         >
           Админ-панель
         </h1>
-        <Link
-          href="/courses/new"
-          className="rounded-full px-5 py-2.5 text-xs font-medium uppercase tracking-widest text-white transition-opacity hover:opacity-90"
-          style={{ background: '#AD82A6' }}
-        >
-          + Создать курс
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/users"
+            className="rounded-full px-5 py-2.5 text-xs font-medium uppercase tracking-widest transition-opacity hover:opacity-80"
+            style={{ border: '0.5px solid #AD82A6', color: '#AD82A6' }}
+          >
+            Пользователи
+          </Link>
+          <Link
+            href="/courses/new"
+            className="rounded-full px-5 py-2.5 text-xs font-medium uppercase tracking-widest text-white transition-opacity hover:opacity-90"
+            style={{ background: '#AD82A6' }}
+          >
+            + Создать курс
+          </Link>
+        </div>
       </div>
 
       {/* Список курсов */}

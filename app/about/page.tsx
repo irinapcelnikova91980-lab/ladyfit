@@ -183,7 +183,7 @@ export default function AboutPage() {
       <footer style={{ borderTop: '1px solid #ede8e8', marginTop: 80, padding: '48px 24px 32px' }}>
         <div style={{ maxWidth: 1100, margin: '0 auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 40 }}>
           <div>
-            <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 22, color: B, marginBottom: 6 }}>LadyFit</div>
+            <div style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 22, color: B, marginBottom: 6 }}>SomraFit</div>
             <p style={{ fontSize: 12, color: '#999', maxWidth: 260, lineHeight: 1.7 }}>
               Платформа онлайн-тренировок Марины Сомра. Там, где фитнес встречается с душой.
             </p>
@@ -208,7 +208,7 @@ export default function AboutPage() {
           </div>
         </div>
         <div style={{ maxWidth: 1100, margin: '24px auto 0', borderTop: '1px solid #ede8e8', paddingTop: 20, fontSize: 11, color: '#bbb' }}>
-          © 2025 LadyFit. Все права защищены.
+          © 2025 SomraFit. Все права защищены.
         </div>
       </footer>
     </div>

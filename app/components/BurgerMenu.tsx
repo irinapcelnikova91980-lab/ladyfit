@@ -38,9 +38,9 @@ export default function BurgerMenu({ role, isOwner }: Props) {
             <div className="border-b border-gray-100 px-5 py-5">
               <p
                 className="text-xl font-light italic"
-                style={{ fontFamily: 'Georgia, serif', color: BRAND }}
+                style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', color: BRAND }}
               >
-                LadyFit
+                SomraFit
               </p>
               <p className="mt-0.5 text-xs uppercase tracking-widest text-gray-400">
                 платформа тренировок
@@ -112,23 +112,33 @@ export default function BurgerMenu({ role, isOwner }: Props) {
               {role === 'user' && (
                 <>
                   <Link
-                    href="/my-courses"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span className="text-sm">✦</span> Мои курсы
-                  </Link>
-
-                  <Link
                     href="/courses"
                     onClick={() => setOpen(false)}
                     className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
                     onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
                     onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                   >
-                    <span className="text-sm">✦</span> Каталог курсов
+                    <span className="text-sm">✦</span> Курсы
+                  </Link>
+
+                  <Link
+                    href="/my-courses"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <span className="text-sm">◎</span> Мои курсы
+                  </Link>
+
+                  <Link
+                    href="/about"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
+                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <span className="text-sm">◇</span> О тренере
                   </Link>
 
                   {isOwner && (
@@ -150,9 +160,9 @@ export default function BurgerMenu({ role, isOwner }: Props) {
             <div className="border-t border-gray-100 p-4">
               <p
                 className="text-sm font-light italic"
-                style={{ fontFamily: 'Georgia, serif', color: BRAND }}
+                style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', color: BRAND }}
               >
-                LadyFit
+                SomraFit
               </p>
               <p className="text-xs text-gray-400">платформа тренировок</p>
             </div>
