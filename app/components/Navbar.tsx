@@ -13,13 +13,19 @@ export default async function Navbar() {
   const { userId: clerkId } = await auth()
   const user = await getCurrentUser()
   const isOwner = checkIsOwner(clerkId)
-  const isAdmin = isOwner || user?.role === 'admin'
-  const role = isAdmin ? 'admin' : user?.role
+
+  // Роль для отображения меню берём из базы.
+  // Владелец всё равно защищён через OWNER_CLERK_ID,
+  // но может переключиться и посмотреть сайт как обычный пользователь.
+  const role = user?.role ?? (clerkId ? 'user' : undefined)
+  const isAdminView = role === 'admin'
 
   return (
     <header
       style={{
-        position: 'sticky', top: 0, zIndex: 100,
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
         background: 'rgba(249,246,244,0.94)',
         backdropFilter: 'blur(12px)',
         borderBottom: '1px solid #ede8e8',
@@ -27,29 +33,33 @@ export default async function Navbar() {
     >
       <div
         style={{
-          maxWidth: 1100, margin: '0 auto', padding: '0 24px',
-          display: 'grid', gridTemplateColumns: '1fr auto 1fr',
-          alignItems: 'center', height: 60,
+          maxWidth: 1100,
+          margin: '0 auto',
+          padding: '0 24px',
+          display: 'grid',
+          gridTemplateColumns: '1fr auto 1fr',
+          alignItems: 'center',
+          height: 60,
         }}
       >
         {/* Left */}
         <nav className="flex items-center gap-6">
           <div className="flex md:hidden">
-            <BurgerMenu isLoggedIn={!!user} role={role} isOwner={isOwner} />
+            <BurgerMenu isLoggedIn={!!clerkId} role={role} isOwner={isOwner} />
           </div>
 
           <div className="hidden md:flex items-center gap-6">
-            {role === 'admin' ? (
+            {isAdminView ? (
               <>
                 <NavLink href="/courses">Курсы</NavLink>
-                <NavLink href="/admin" muted>Админка</NavLink>
-                {isOwner && <NavLink href="/debug/owner-role" muted>Доступ</NavLink>}
+                <NavLink href="/admin" muted>
+                  Админка
+                </NavLink>
               </>
             ) : (
               <>
                 <NavLink href="/courses">Курсы</NavLink>
-                {user && <NavLink href="/my-courses">Мои курсы</NavLink>}
-                <NavLink href="/about">О тренере</NavLink>
+                {clerkId && <NavLink href="/my-courses">Мои курсы</NavLink>}
               </>
             )}
           </div>

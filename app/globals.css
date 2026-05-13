@@ -1,12 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9f6f4;
-  --foreground: #1a1a1a;
+  --background: #F6DED2;
+  --foreground: #5C3D2E;
+
   --brand: #AD82A6;
   --brand-light: #f3eef5;
   --brand-border: #e8d5e8;
   --brand-text: #7a5278;
+
+  --peach: #F6DED2;
+  --peach-soft: #FFF8F4;
+  --peach-border: #EAD8CF;
+  --muted: #A8846F;
 }
 
 @theme inline {
@@ -24,6 +30,7 @@
 
 html {
   font-size: 16px;
+  background: var(--background);
 }
 
 body {
@@ -47,7 +54,8 @@ button {
 }
 
 input,
-textarea {
+textarea,
+select {
   font-family: inherit;
 }
 

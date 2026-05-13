@@ -12,7 +12,7 @@ type Props = {
 const BRAND = '#AD82A6'
 const BRAND_LIGHT = '#f3eef5'
 
-export default function BurgerMenu({ role, isOwner }: Props) {
+export default function BurgerMenu({ role }: Props) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -33,15 +33,18 @@ export default function BurgerMenu({ role, isOwner }: Props) {
           />
 
           <aside className="fixed left-0 top-[73px] z-50 flex h-[calc(100vh-73px)] w-64 flex-col border-r border-gray-100 bg-white shadow-lg">
-
             {/* Шапка */}
             <div className="border-b border-gray-100 px-5 py-5">
               <p
                 className="text-xl font-light italic"
-                style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', color: BRAND }}
+                style={{
+                  fontFamily: 'var(--font-cormorant), Georgia, serif',
+                  color: BRAND,
+                }}
               >
                 SomraFit
               </p>
+
               <p className="mt-0.5 text-xs uppercase tracking-widest text-gray-400">
                 платформа тренировок
               </p>
@@ -54,37 +57,19 @@ export default function BurgerMenu({ role, isOwner }: Props) {
               </p>
 
               {/* На главную — для всех */}
-              <Link
-                href="/"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-              >
-                <span className="text-sm">◎</span> На главную
-              </Link>
+              <MenuLink href="/" onClick={() => setOpen(false)} icon="◎">
+                На главную
+              </MenuLink>
 
               {role === 'admin' && (
                 <>
-                  <Link
-                    href="/courses"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span className="text-sm">✦</span> Курсы
-                  </Link>
+                  <MenuLink href="/courses" onClick={() => setOpen(false)} icon="✦">
+                    Курсы
+                  </MenuLink>
 
-                  <Link
-                    href="/admin"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span className="text-sm">⚙</span> Админка
-                  </Link>
+                  <MenuLink href="/admin" onClick={() => setOpen(false)} icon="⚙">
+                    Админка
+                  </MenuLink>
 
                   <Link
                     href="/courses/new"
@@ -94,64 +79,18 @@ export default function BurgerMenu({ role, isOwner }: Props) {
                   >
                     <span>＋</span> Создать курс
                   </Link>
-
-                  {isOwner && (
-                    <Link
-                      href="/debug/owner-role"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                      onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <span className="text-sm">⚙</span> Настройка доступа
-                    </Link>
-                  )}
                 </>
               )}
 
               {role === 'user' && (
                 <>
-                  <Link
-                    href="/courses"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span className="text-sm">✦</span> Курсы
-                  </Link>
+                  <MenuLink href="/courses" onClick={() => setOpen(false)} icon="✦">
+                    Курсы
+                  </MenuLink>
 
-                  <Link
-                    href="/my-courses"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span className="text-sm">◎</span> Мои курсы
-                  </Link>
-
-                  <Link
-                    href="/about"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                    onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                    onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                  >
-                    <span className="text-sm">◇</span> О тренере
-                  </Link>
-
-                  {isOwner && (
-                    <Link
-                      href="/debug/owner-role"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
-                      onMouseEnter={e => (e.currentTarget.style.background = BRAND_LIGHT)}
-                      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
-                    >
-                      <span className="text-sm">⚙</span> Настройка доступа
-                    </Link>
-                  )}
+                  <MenuLink href="/my-courses" onClick={() => setOpen(false)} icon="◎">
+                    Мои курсы
+                  </MenuLink>
                 </>
               )}
             </nav>
@@ -160,16 +99,43 @@ export default function BurgerMenu({ role, isOwner }: Props) {
             <div className="border-t border-gray-100 p-4">
               <p
                 className="text-sm font-light italic"
-                style={{ fontFamily: 'var(--font-cormorant), Georgia, serif', color: BRAND }}
+                style={{
+                  fontFamily: 'var(--font-cormorant), Georgia, serif',
+                  color: BRAND,
+                }}
               >
                 SomraFit
               </p>
+
               <p className="text-xs text-gray-400">платформа тренировок</p>
             </div>
-
           </aside>
         </>
       )}
     </>
+  )
+}
+
+function MenuLink({
+  href,
+  onClick,
+  icon,
+  children,
+}: {
+  href: string
+  onClick: () => void
+  icon: string
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors hover:text-[#7a5278]"
+      onMouseEnter={(e) => (e.currentTarget.style.background = BRAND_LIGHT)}
+      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+    >
+      <span className="text-sm">{icon}</span> {children}
+    </Link>
   )
 }

@@ -1,6 +1,9 @@
 import { createCourse } from './server-actions'
+import { requireAdmin } from '../../lib/auth'
 
-export default function NewCoursePage() {
+export default async function NewCoursePage() {
+  await requireAdmin()
+
   return (
     <main className="p-10">
       <h1 className="text-3xl font-bold">Создать курс</h1>

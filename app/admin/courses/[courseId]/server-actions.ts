@@ -7,12 +7,14 @@ import { requireAdmin } from '../../../lib/auth'
 export async function updateCourse(formData: FormData) {
   await requireAdmin()
 
-  const courseId = formData.get('courseId')?.toString() || ''
-  const title = formData.get('title')?.toString() || ''
-  const description = formData.get('description')?.toString() || ''
-  const price = Number(formData.get('price') || 0)
+  const courseId = formData.get('courseId')?.toString().trim() || ''
+  const title = formData.get('title')?.toString().trim() || ''
+  const slug = formData.get('slug')?.toString().trim() || ''
+  const description = formData.get('description')?.toString().trim() || ''
+  const price = Number(formData.get('price')?.toString() || '0')
+  const isPublished = formData.get('isPublished') === 'on'
 
-  if (!courseId || !title || !price) {
+  if (!courseId || !title || !slug || Number.isNaN(price) || price < 0) {
     throw new Error('Заполни обязательные поля')
   }
 
@@ -20,10 +22,57 @@ export async function updateCourse(formData: FormData) {
     where: { id: courseId },
     data: {
       title,
-      description,
+      slug,
+      description: description || null,
       price,
+      isPublished,
     },
   })
 
-  redirect('/admin')
+  redirect(`/admin/courses/${courseId}`)
+}
+
+export async function createLesson(formData: FormData) {
+  await requireAdmin()
+
+  const courseId = formData.get('courseId')?.toString().trim() || ''
+  const title = formData.get('title')?.toString().trim() || ''
+  const content = formData.get('content')?.toString().trim() || ''
+  const videoUrl = formData.get('videoUrl')?.toString().trim() || ''
+  const order = Number(formData.get('order')?.toString() || '1')
+  const isFree = formData.get('isFree') === 'on'
+
+  if (!courseId || !title || Number.isNaN(order) || order < 1) {
+    throw new Error('Заполни обязательные поля урока')
+  }
+
+  await prisma.lesson.create({
+    data: {
+      courseId,
+      title,
+      content: content || null,
+      videoUrl: videoUrl || null,
+      order,
+      isFree,
+    },
+  })
+
+  redirect(`/admin/courses/${courseId}`)
+}
+
+export async function deleteLesson(formData: FormData) {
+  await requireAdmin()
+
+  const courseId = formData.get('courseId')?.toString().trim() || ''
+  const lessonId = formData.get('lessonId')?.toString().trim() || ''
+
+  if (!courseId || !lessonId) {
+    throw new Error('Неверные данные урока')
+  }
+
+  await prisma.lesson.delete({
+    where: { id: lessonId },
+  })
+
+  redirect(`/admin/courses/${courseId}`)
 }
