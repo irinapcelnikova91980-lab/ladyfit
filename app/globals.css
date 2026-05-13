@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F6DED2;
+  --background: #F6EDE2;
   --foreground: #5C3D2E;
 
   --brand: #AD82A6;
@@ -9,7 +9,7 @@
   --brand-border: #e8d5e8;
   --brand-text: #7a5278;
 
-  --peach: #F6DED2;
+  --peach: #F6EDE2;
   --peach-soft: #FFF8F4;
   --peach-border: #EAD8CF;
   --muted: #A8846F;

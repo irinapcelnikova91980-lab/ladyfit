@@ -6,7 +6,6 @@ import { useState } from 'react'
 const B = '#AD82A6'
 const BL = '#f3eef5'
 const BT = '#7a5278'
-const BB = '#e8d5e8'
 const SERIF = 'var(--font-cormorant), Georgia, serif'
 
 const CARD_TOPS = [
@@ -95,7 +94,7 @@ export default function CoursesGrid({ courses }: { courses: Course[] }) {
         </p>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 16 }}>
-          {filtered.map((course, i) => {
+          {filtered.map((course) => {
             const origIdx = courses.indexOf(course)
             const isHovered = hoverId === course.id
             return (

@@ -138,7 +138,7 @@ export default function AuthPage() {
   return (
     <main style={{
       minHeight: '80vh', display: 'flex', alignItems: 'center',
-      justifyContent: 'center', padding: '40px 24px', background: '#f9f6f4',
+      justifyContent: 'center', padding: '40px 24px', background: '#F6EDE2',
     }}>
       <div style={{ width: '100%', maxWidth: 420 }}>
 
