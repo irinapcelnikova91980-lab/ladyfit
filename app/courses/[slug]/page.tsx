@@ -7,35 +7,46 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
-const BRAND = '#AD82A6'
-const BRAND_LIGHT = '#f3eef5'
-const BRAND_BORDER = '#d9c2d9'
-const BRAND_TEXT = '#7a5278'
+const PEACH       = '#F6EDE2'
+const PEACH_SOFT  = '#FFF8F4'
+const PEACH_BORDER = '#EAD8CF'
+const LAVENDER    = '#AD82A6'
+const LAV_LIGHT   = '#f3eef5'
+const LAV_BORDER  = '#e8d5e8'
+const LAV_TEXT    = '#7a5278'
+const TEXT        = '#5C3D2E'
+const MUTED       = '#A8846F'
+const SERIF       = 'var(--font-cormorant), Georgia, serif'
+
+const CARD_TOPS = [
+  'linear-gradient(135deg,#e8d5e8 0%,#AD82A6 100%)',
+  'linear-gradient(135deg,#dce8f0 0%,#8aaec4 100%)',
+  'linear-gradient(135deg,#e8e4d5 0%,#b8a882 100%)',
+  'linear-gradient(135deg,#d5e8e0 0%,#82a896 100%)',
+  'linear-gradient(135deg,#e8dcd5 0%,#a8907e 100%)',
+]
 
 export default async function CoursePage({ params }: Props) {
   const { slug } = await params
 
   const course = await prisma.course.findUnique({
     where: { slug },
-    include: {
-      lessons: {
-        orderBy: { order: 'asc' },
-      },
-    },
+    include: { lessons: { orderBy: { order: 'asc' } } },
   })
 
   if (!course) {
-    return <div className="p-10">Курс не найден</div>
+    return (
+      <main style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: MUTED, fontFamily: SERIF, fontStyle: 'italic', fontSize: 24 }}>Курс не найден</p>
+      </main>
+    )
   }
 
   const user = await getCurrentUser()
   const isAdmin = user?.role === 'admin'
-
   const hasAccess = isAdmin
     ? true
-    : user
-      ? await hasCourseAccess(user.id, course.id)
-      : false
+    : user ? await hasCourseAccess(user.id, course.id) : false
 
   const completedLessonIds = user
     ? new Set(
@@ -46,178 +57,296 @@ export default async function CoursePage({ params }: Props) {
       )
     : new Set<string>()
 
+  const totalLessons = course.lessons.length
+  const doneCount = course.lessons.filter(l => completedLessonIds.has(l.id)).length
+  const slugIndex = slug.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+  const heroBg = CARD_TOPS[slugIndex % CARD_TOPS.length]
+
   return (
-    <main className="mx-auto max-w-5xl px-4 py-8">
+    <main style={{ minHeight: 'calc(100vh - 60px)', background: PEACH, color: TEXT }}>
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px 56px' }}>
 
-      {/* Шапка-герой */}
-      <div
-        style={{ background: BRAND }}
-        className="relative mb-8 flex min-h-[220px] flex-col justify-end overflow-hidden rounded-2xl px-10 py-12"
-      >
-        <div
-          className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage:
-              'repeating-linear-gradient(45deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)',
-          }}
-        />
-        <span
-          className="mb-4 w-fit rounded-full px-3 py-1 text-xs font-medium uppercase tracking-widest text-white"
-          style={{ background: 'rgba(255,255,255,0.2)', border: '0.5px solid rgba(255,255,255,0.35)' }}
-        >
-          Онлайн-курс
-        </span>
-        <h1 className="mb-2 text-5xl font-light italic text-white" style={{ fontFamily: 'Georgia, serif' }}>
-          {course.title}
-        </h1>
-        <p className="text-sm font-light tracking-wide text-white/70">
-          <span className="mr-1 text-2xl text-white">{course.price} ₽</span>
-          единоразово
-        </p>
-      </div>
+        {/* Breadcrumb */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, fontSize: 13, color: MUTED }}>
+          <Link href="/courses" style={{ color: MUTED, textDecoration: 'none' }}>Курсы</Link>
+          <span style={{ opacity: 0.5 }}>›</span>
+          <span>{course.title}</span>
+        </div>
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_280px]">
+        {/* Hero */}
+        <div style={{
+          borderRadius: 28, overflow: 'hidden', marginBottom: 28,
+          background: heroBg, position: 'relative', minHeight: 260,
+          display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+          padding: '36px 40px',
+        }}>
+          <div style={{
+            position: 'absolute', inset: 0, opacity: 0.08,
+            backgroundImage: 'repeating-linear-gradient(45deg,#fff 0px,#fff 1px,transparent 1px,transparent 20px)',
+          }} />
 
-        {/* Левая колонка */}
-        <div>
-          <p className="mb-6 text-sm font-light leading-relaxed text-gray-500">
-            {course.description ?? 'Описание курса появится здесь.'}
-          </p>
+          <span style={{
+            display: 'inline-flex', width: 'fit-content', borderRadius: 999,
+            padding: '5px 14px', fontSize: 10, fontWeight: 600, letterSpacing: '0.1em',
+            textTransform: 'uppercase', color: '#fff',
+            background: 'rgba(255,255,255,0.2)', border: '0.5px solid rgba(255,255,255,0.4)',
+            marginBottom: 14,
+          }}>
+            Онлайн-курс
+          </span>
 
-          {/* Блок доступа */}
-          <div
-            className="mb-6 flex items-center gap-3 rounded-xl px-4 py-3 text-sm"
-            style={{ background: BRAND_LIGHT, border: `0.5px solid ${BRAND_BORDER}`, color: BRAND_TEXT }}
-          >
-            {hasAccess ? (
-              <>
-                🔓
-                <span>
-                  {isAdmin ? 'Ты администратор: полный доступ к курсу' : 'У тебя есть доступ к курсу'}
-                </span>
-              </>
-            ) : (
-              <>
-                🔒
-                <span>Доступа к курсу пока нет</span>
-              </>
-            )}
-          </div>
+          <h1 style={{
+            fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300,
+            fontSize: 56, color: '#fff', lineHeight: 1, marginBottom: 14,
+          }}>
+            {course.title}
+          </h1>
 
-          {/* Кнопка добавить урок для админа */}
-          {isAdmin && (
-            <div className="mb-6">
-              <Link
-                href={`/courses/${course.slug}/lessons/new`}
-                className="inline-block rounded-xl border border-gray-200 px-4 py-2 text-sm hover:bg-gray-50"
-              >
-                + Добавить урок
-              </Link>
-            </div>
-          )}
-
-          {/* Список уроков */}
-          <div>
-            <p className="mb-4 border-b border-gray-100 pb-3 text-xs uppercase tracking-widest text-gray-400">
-              Программа курса
-            </p>
-
-            {course.lessons.length === 0 ? (
-              <p className="py-10 text-center text-sm italic text-gray-400">
-                Уроки пока не добавлены
-              </p>
-            ) : (
-              <div>
-                {course.lessons.map((lesson) => {
-                  const done = completedLessonIds.has(lesson.id)
-                  return (
-                    <div
-                      key={lesson.id}
-                      className="flex items-start gap-4 border-b border-gray-100 py-4"
-                    >
-                      <span className="min-w-[28px] text-xl font-light text-gray-400" style={{ fontFamily: 'Georgia, serif' }}>
-                        {done
-                          ? <span style={{ color: BRAND, fontSize: 18 }}>✓</span>
-                          : String(lesson.order).padStart(2, '0')}
-                      </span>
-
-                      <div className="flex-1">
-                        {hasAccess || lesson.isFree ? (
-                          <Link href={`/courses/${course.slug}/lessons/${lesson.id}`}>
-                            <p className="text-sm font-medium hover:opacity-60 transition-opacity" style={{ color: done ? BRAND_TEXT : undefined }}>
-                              {lesson.title}
-                            </p>
-                          </Link>
-                        ) : (
-                          <p className="text-sm font-medium text-gray-400">{lesson.title}</p>
-                        )}
-                        {lesson.content && (
-                          <p className="mt-1 text-xs text-gray-400">{lesson.content}</p>
-                        )}
-                      </div>
-
-                      <div className="mt-0.5 shrink-0" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        {lesson.isFree ? (
-                          <span
-                            className="rounded-full px-2 py-1 text-xs uppercase tracking-wide"
-                            style={{ background: BRAND_LIGHT, color: BRAND_TEXT, border: `0.5px solid ${BRAND_BORDER}` }}
-                          >
-                            Бесплатно
-                          </span>
-                        ) : hasAccess ? null : (
-                          <span className="text-xs text-gray-300">🔒</span>
-                        )}
-
-                        {isAdmin && (
-                          <Link
-                            href={`/admin/lessons/${lesson.id}`}
-                            className="ml-2 inline-block rounded-lg border border-gray-200 px-3 py-1 text-xs hover:bg-gray-50"
-                          >
-                            Редактировать
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 20 }}>
+            <span style={{ fontFamily: SERIF, fontStyle: 'italic', fontSize: 32, color: '#fff', fontWeight: 300 }}>
+              {course.price.toLocaleString('ru-RU')} ₽
+            </span>
+            {totalLessons > 0 && (
+              <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)', fontWeight: 300 }}>
+                {totalLessons} {totalLessons === 1 ? 'урок' : totalLessons < 5 ? 'урока' : 'уроков'}
+              </span>
             )}
           </div>
         </div>
 
-        {/* Правая колонка — карточка покупки */}
-        {!hasAccess && !isAdmin && (
-          <div className="rounded-2xl border border-gray-100 bg-gray-50 p-6">
-            <p className="mb-1 text-4xl font-light" style={{ fontFamily: 'Georgia, serif' }}>
-              {course.price} ₽
-            </p>
-            <p className="mb-5 text-xs uppercase tracking-widest text-gray-400">
-              Полный доступ навсегда
-            </p>
+        {/* Body */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: 20, alignItems: 'start' }}>
 
-            <Link
-              href={`/courses/${course.slug}/buy`}
-              className="block w-full rounded-xl py-3 text-center text-sm font-medium uppercase tracking-widest text-white transition-opacity hover:opacity-90"
-              style={{ background: BRAND }}
-            >
-              Купить курс
-            </Link>
+          {/* Left */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-            <div className="my-5 h-px bg-gray-200" />
+            {/* Description */}
+            {course.description && (
+              <section style={{
+                background: 'rgba(255,255,255,0.72)', border: `1px solid ${PEACH_BORDER}`,
+                borderRadius: 24, padding: '24px 28px',
+              }}>
+                <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: MUTED, marginBottom: 12 }}>
+                  О курсе
+                </p>
+                <p style={{ fontSize: 14, color: TEXT, lineHeight: 1.8, fontWeight: 300 }}>
+                  {course.description}
+                </p>
+              </section>
+            )}
 
-            {[
-              'Доступ ко всем урокам',
-              'Видео в высоком качестве',
-              'Доступ с любого устройства',
-              'Без ограничений по времени',
-            ].map((f) => (
-              <div key={f} className="mb-3 flex items-center gap-3 text-xs text-gray-500">
-                <div className="h-1 w-1 shrink-0 rounded-full" style={{ background: BRAND }} />
-                {f}
+            {/* Access banner */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 12,
+              background: hasAccess ? LAV_LIGHT : PEACH_SOFT,
+              border: `1px solid ${hasAccess ? LAV_BORDER : PEACH_BORDER}`,
+              borderRadius: 16, padding: '14px 20px', fontSize: 13,
+              color: hasAccess ? LAV_TEXT : MUTED,
+            }}>
+              <span style={{ fontSize: 18 }}>{hasAccess ? '🔓' : '🔒'}</span>
+              <span>
+                {isAdmin
+                  ? 'Администратор — полный доступ к курсу'
+                  : hasAccess
+                    ? 'У вас есть доступ к этому курсу'
+                    : 'Доступ откроется после покупки'}
+              </span>
+            </div>
+
+            {/* Admin: add lesson */}
+            {isAdmin && (
+              <Link
+                href={`/courses/${course.slug}/lessons/new`}
+                style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8,
+                  borderRadius: 999, border: `1px solid ${LAV_BORDER}`,
+                  background: LAV_LIGHT, color: LAV_TEXT,
+                  padding: '10px 20px', fontSize: 12, fontWeight: 500,
+                  letterSpacing: '0.06em', textTransform: 'uppercase',
+                  textDecoration: 'none', width: 'fit-content',
+                }}
+              >
+                <span>＋</span> Добавить урок
+              </Link>
+            )}
+
+            {/* Lessons */}
+            <section style={{
+              background: 'rgba(255,255,255,0.72)', border: `1px solid ${PEACH_BORDER}`,
+              borderRadius: 24, overflow: 'hidden',
+            }}>
+              <div style={{
+                padding: '18px 24px', borderBottom: `1px solid ${PEACH_BORDER}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              }}>
+                <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: MUTED }}>
+                  Программа курса
+                </p>
+                {totalLessons > 0 && (
+                  <span style={{ fontSize: 12, color: MUTED }}>
+                    {totalLessons} {totalLessons === 1 ? 'урок' : totalLessons < 5 ? 'урока' : 'уроков'}
+                    {doneCount > 0 && ` · ${doneCount} пройдено`}
+                  </span>
+                )}
               </div>
-            ))}
+
+              {course.lessons.length === 0 ? (
+                <p style={{
+                  padding: '48px 24px', textAlign: 'center',
+                  fontFamily: SERIF, fontStyle: 'italic', fontSize: 18, color: MUTED,
+                }}>
+                  Уроки пока не добавлены
+                </p>
+              ) : (
+                <div>
+                  {course.lessons.map((lesson, i) => {
+                    const done = completedLessonIds.has(lesson.id)
+                    const accessible = hasAccess || lesson.isFree
+
+                    return (
+                      <div key={lesson.id} style={{
+                        display: 'flex', alignItems: 'center', gap: 16,
+                        padding: '16px 24px',
+                        borderBottom: i < course.lessons.length - 1 ? `1px solid ${PEACH_BORDER}` : 'none',
+                        transition: 'background .15s',
+                      }}>
+                        {/* Number / check */}
+                        <div style={{
+                          width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          background: done ? LAVENDER : PEACH_SOFT,
+                          border: `1px solid ${done ? LAVENDER : PEACH_BORDER}`,
+                          fontSize: done ? 14 : 12,
+                          color: done ? '#fff' : MUTED,
+                          fontFamily: SERIF,
+                        }}>
+                          {done ? '✓' : String(lesson.order).padStart(2, '0')}
+                        </div>
+
+                        {/* Title */}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          {accessible ? (
+                            <Link
+                              href={`/courses/${course.slug}/lessons/${lesson.id}`}
+                              style={{
+                                fontSize: 14, fontWeight: 500, color: done ? LAV_TEXT : TEXT,
+                                textDecoration: 'none', display: 'block',
+                              }}
+                            >
+                              {lesson.title}
+                            </Link>
+                          ) : (
+                            <p style={{ fontSize: 14, fontWeight: 500, color: MUTED }}>{lesson.title}</p>
+                          )}
+                        </div>
+
+                        {/* Badges */}
+                        <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                          {lesson.isFree && (
+                            <span style={{
+                              borderRadius: 999, padding: '4px 10px',
+                              fontSize: 10, fontWeight: 600, letterSpacing: '0.08em',
+                              textTransform: 'uppercase', color: '#3A7A5A',
+                              background: '#E6F4EA', border: '1px solid #A8D5BB',
+                            }}>
+                              Бесплатно
+                            </span>
+                          )}
+                          {!accessible && !lesson.isFree && (
+                            <span style={{ fontSize: 14, color: PEACH_BORDER }}>🔒</span>
+                          )}
+                          {isAdmin && (
+                            <Link
+                              href={`/admin/lessons/${lesson.id}`}
+                              style={{
+                                borderRadius: 10, border: `1px solid ${PEACH_BORDER}`,
+                                background: PEACH_SOFT, color: MUTED,
+                                padding: '4px 10px', fontSize: 11, textDecoration: 'none',
+                              }}
+                            >
+                              Изменить
+                            </Link>
+                          )}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </section>
           </div>
-        )}
+
+          {/* Right — purchase card */}
+          <aside style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+            {!hasAccess && !isAdmin && (
+              <div style={{
+                background: 'rgba(255,255,255,0.72)', border: `1px solid ${PEACH_BORDER}`,
+                borderRadius: 24, padding: 24,
+              }}>
+                <p style={{
+                  fontFamily: SERIF, fontStyle: 'italic', fontWeight: 300,
+                  fontSize: 42, color: TEXT, lineHeight: 1, marginBottom: 4,
+                }}>
+                  {course.price.toLocaleString('ru-RU')} ₽
+                </p>
+                <p style={{ fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.1em', color: MUTED, marginBottom: 20 }}>
+                  Полный доступ навсегда
+                </p>
+
+                <Link
+                  href={`/courses/${course.slug}/buy`}
+                  style={{
+                    display: 'block', textAlign: 'center', borderRadius: 999,
+                    background: LAVENDER, color: '#fff', padding: '14px 20px',
+                    fontSize: 12, fontWeight: 500, letterSpacing: '0.08em',
+                    textTransform: 'uppercase', textDecoration: 'none',
+                  }}
+                >
+                  Купить курс
+                </Link>
+
+                <div style={{ height: 1, background: PEACH_BORDER, margin: '20px 0' }} />
+
+                {[
+                  'Доступ ко всем урокам',
+                  'Видео в высоком качестве',
+                  'Доступ с любого устройства',
+                  'Без ограничений по времени',
+                ].map(f => (
+                  <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10, fontSize: 13, color: TEXT }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: LAVENDER, flexShrink: 0 }} />
+                    {f}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Info card */}
+            <div style={{
+              background: LAV_LIGHT, border: `1px solid ${LAV_BORDER}`,
+              borderRadius: 24, padding: 20,
+            }}>
+              <p style={{
+                fontFamily: SERIF, fontStyle: 'italic', fontSize: 22,
+                color: LAVENDER, marginBottom: 12,
+              }}>
+                Что внутри
+              </p>
+              {[
+                { icon: '✦', text: `${totalLessons} видео-уроков` },
+                { icon: '◎', text: 'Практические задания' },
+                { icon: '◇', text: 'Поддержка тренера' },
+              ].map(({ icon, text }) => (
+                <div key={text} style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 10, fontSize: 13, color: LAV_TEXT }}>
+                  <span style={{ color: LAVENDER, fontSize: 12 }}>{icon}</span>
+                  {text}
+                </div>
+              ))}
+            </div>
+
+          </aside>
+        </div>
       </div>
     </main>
   )

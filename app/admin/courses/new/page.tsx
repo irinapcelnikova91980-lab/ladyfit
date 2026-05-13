@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { requireAdmin } from '../../../lib/auth'
 import { createCourse } from './server-actions'
 
-const PEACH = '#F6DED2'
+const PEACH = '#F6EDE2'
 const PEACH_SOFT = '#FFF8F4'
 const PEACH_BORDER = '#EAD8CF'
 const LAVENDER = '#AD82A6'
