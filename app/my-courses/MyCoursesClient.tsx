@@ -38,17 +38,20 @@ type Achievement = {
 export default function MyCoursesClient({
   courses,
   achievements,
+  name,
+  email,
 }: {
   courses: Course[]
   achievements: Achievement[]
+  name: string | null
+  email: string
 }) {
   const { user } = useUser()
   const [tab, setTab] = useState(0)
   const tabs = ['Мои курсы', 'Достижения', 'Настройки']
 
-  const initials = (user?.firstName?.[0] ?? user?.emailAddresses?.[0]?.emailAddress?.[0] ?? 'М').toUpperCase()
-  const displayName = user?.firstName ?? user?.emailAddresses?.[0]?.emailAddress ?? 'Пользователь'
-  const email = user?.emailAddresses?.[0]?.emailAddress ?? ''
+  const displayName = name ?? user?.firstName ?? email ?? 'Пользователь'
+  const initials = (displayName[0] ?? 'М').toUpperCase()
 
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px' }}>
@@ -177,7 +180,7 @@ export default function MyCoursesClient({
       {tab === 2 && (
         <div style={{ maxWidth: 500 }}>
           {[
-            ['Имя', user?.firstName ?? ''],
+            ['Имя', name ?? user?.firstName ?? ''],
             ['Email', email],
           ].map(([label, val]) => (
             <div key={label} style={{ marginBottom: 20 }}>

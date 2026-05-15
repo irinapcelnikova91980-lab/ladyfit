@@ -44,9 +44,7 @@ export default async function Navbar() {
       >
         {/* Left */}
         <nav className="flex items-center gap-6">
-          <div className="flex md:hidden">
-            <BurgerMenu isLoggedIn={!!clerkId} role={role} isOwner={isOwner} />
-          </div>
+          <BurgerMenu isLoggedIn={!!clerkId} role={role} isOwner={isOwner} hasProAccess={false} />
 
           <div className="hidden md:flex items-center gap-6">
             {isAdminView ? (

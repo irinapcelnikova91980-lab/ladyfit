@@ -14,7 +14,7 @@ const MUTED = '#A8846F'
 const SERIF = 'var(--font-cormorant), Georgia, serif'
 
 export default async function AdminPage() {
-  await requireAdmin()
+  const adminUser = await requireAdmin()
 
   const [courses, usersCount, coursesCount, lessonsCount, publishedCoursesCount] =
     await Promise.all([
@@ -72,7 +72,7 @@ export default async function AdminPage() {
                   marginBottom: 8,
                 }}
               >
-                Добрый день, Марина
+                Добрый день, {adminUser.name ?? 'администратор'}
               </h1>
 
               <p
@@ -86,7 +86,7 @@ export default async function AdminPage() {
             </div>
 
             <Link
-              href="/courses/new"
+              href="/admin/courses/new"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
@@ -217,7 +217,7 @@ export default async function AdminPage() {
                 </p>
 
                 <Link
-                  href="/courses/new"
+                  href="/admin/courses/new"
                   style={{
                     display: 'inline-flex',
                     borderRadius: 999,
@@ -430,7 +430,7 @@ export default async function AdminPage() {
             </h2>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              <QuickAction href="/courses/new" icon="+">
+              <QuickAction href="/admin/courses/new" icon="+">
                 Создать курс
               </QuickAction>
 

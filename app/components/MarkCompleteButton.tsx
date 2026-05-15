@@ -1,6 +1,7 @@
 'use client'
 
 import { useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import { markLessonComplete } from '../actions/progress'
 
 const B = '#AD82A6'
@@ -15,6 +16,7 @@ type Props = {
 
 export default function MarkCompleteButton({ lessonId, courseSlug, completed }: Props) {
   const [pending, startTransition] = useTransition()
+  const router = useRouter()
 
   if (completed) {
     return (
@@ -32,7 +34,10 @@ export default function MarkCompleteButton({ lessonId, courseSlug, completed }: 
   return (
     <button
       disabled={pending}
-      onClick={() => startTransition(() => markLessonComplete(lessonId, courseSlug))}
+      onClick={() => startTransition(async () => {
+        await markLessonComplete(lessonId, courseSlug)
+        router.refresh()
+      })}
       style={{
         display: 'inline-flex', alignItems: 'center', gap: 8,
         borderRadius: 999, padding: '10px 22px',
